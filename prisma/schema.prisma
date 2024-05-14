@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/airport_modyl"
+}
+
+model aviacompany {
+  CompanyID     Int             @id @default(autoincrement())
+  CompanyName   String          @db.VarChar(255)
+  PlaneModel    String          @db.VarChar(255)
+  PlaneCapacity Int
+  ticket_flight ticket_flight[]
+}
+
+model ticket {
+  Date          DateTime        @db.Date
+  FlightNum     Int             @id @default(autoincrement())
+  Value         Int
+  TicketQ       Int
+  TicketC       String          @db.VarChar(255)
+  ticket_flight ticket_flight[]
+}
+
+model ticket_flight {
+  FlightNum   Int
+  FlightName  String      @db.VarChar(255)
+  CompanyID   Int
+  FinallD     String      @db.VarChar(255)
+  Ticket_Id   Int         @id @default(autoincrement())
+  aviacompany aviacompany @relation(fields: [CompanyID], references: [CompanyID], onDelete: Cascade, map: "Company_bind")
+  ticket      ticket      @relation(fields: [FlightNum], references: [FlightNum], onDelete: Cascade, map: "Ticket_bind")
+
+  @@index([CompanyID], map: "Company_bind")
+  @@index([FlightNum], map: "Ticket_bind")
+}
